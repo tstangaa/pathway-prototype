@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HKUST SBM Compass</title>
+
+  <style>
+    :root {
+      --navy: #062b49;
+      --blue: #0d6efd;
+      --light-blue: #eaf4ff;
+      --gold: #f4b400;
+      --text: #243447;
+      --muted: #718096;
+      --background: #f5f7fb;
+      --white: #ffffff;
+      --border: #e2e8f0;
+      --success: #198754;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--background);
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      min-height: 100vh;
+      background: var(--navy);
+      color: white;
+      padding: 24px 16px;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 10px 28px;
+      border-bottom: 1px solid rgba(255,255,255,.15);
+      margin-bottom: 24px;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--gold);
+      color: var(--navy);
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .logo h1 {
+      font-size: 17px;
+      line-height: 1.2;
+    }
+
+    .logo span {
+      display: block;
+      font-size: 11px;
+      color: #cbd5e1;
+      margin-top: 4px;
+      font-weight: normal;
+    }
+
+    .nav-title {
+      color: #9fb3c8;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 18px 12px 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #dbeafe;
+      text-decoration: none;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 5px 0;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: #17486d;
+      color: white;
+    }
+
+    .nav-item.active {
+      border-left: 4px solid var(--gold);
+      padding-left: 8px;
+    }
+
+    /* Main content */
+    .main {
+      width: calc(100% - 250px);
+      margin-left: 250px;
+    }
+
+    .topbar {
+      height: 72px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 34px;
+    }
+
+    .topbar h2 {
+      font-size: 22px;
+      color: var(--navy);
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--light-blue);
+      color: var(--blue);
+      display: grid;
+      place-items: center;
+      font-weight: bold;
+    }
+
+    .content {
+      padding: 34px;
+      max-width: 1500px;
+      margin: auto;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .welcome {
+      background: linear-gradient(120deg, #073b63, #0e7490);
+      color: white;
+      border-radius: 14px;
+      padding: 30px;
+      margin-bottom: 26px;
+    }
+
+    .welcome h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .welcome p {
+      color: #dbeafe;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card,
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 3px 12px rgba(15, 23, 42, .04);
+    }
+
+    .stat-card small {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .stat-card strong {
+      font-size: 28px;
+      color: var(--navy);
+    }
+
+    .stat-card .icon {
+      float: right;
+      font-size: 25px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 22px;
+    }
+
+    .card h3 {
+      color: var(--navy);
+      margin-bottom: 18px;
+      font-size: 19px;
+    }
+
+    .progress-row {
+      margin: 18px 0;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 7px;
+      font-size: 14px;
+    }
+
+    .progress {
+      height: 9px;
+      border-radius: 20px;
+      background: #e9eef5;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--blue);
+      border-radius: inherit;
+    }
+
+    .announcement {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .announcement:last-child {
+      border-bottom: 0;
+    }
+
+    .announcement h4 {
+      margin-bottom: 5px;
+      color: var(--navy);
+    }
+
+    .announcement small {
+      color: var(--muted);
+    }
+
+    /* Course explorer */
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    input,
+    select {
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 11px 13px;
+      font-size: 14px;
+      background: white;
+    }
+
+    input {
+      min-width: 270px;
+      flex: 1;
+    }
+
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .course-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .course-code {
+      color: var(--blue);
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .course-card h3 {
+      margin: 9px 0;
+      color: var(--navy);
+      font-size: 17px;
+    }
+
+    .course-card p {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    .tag {
+      display: inline-block;
+      background: var(--light-blue);
+      color: var(--blue);
+      font-size: 12px;
+      border-radius: 20px;
+      padding: 5px 9px;
+      margin-right: 4px;
+    }
+
+    .button {
+      background: var(--blue);
+      color: white;
+      border: 0;
+      border-radius: 7px;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .button:hover {
+      background: #0957c7;
+    }
+
+    .button.secondary {
+      background: #edf2f7;
+      color: var(--navy);
+    }
+
+    /* Planner */
+    .semester {
+      margin-bottom: 20px;
+    }
+
+    .semester-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--navy);
+      color: white;
+      padding: 15px 18px;
+      border-radius: 9px 9px 0 0;
+    }
+
+    .semester-list {
+      background: white;
+      border: 1px solid var(--border);
+      border-top: 0;
+      border-radius: 0 0 9px 9px;
+    }
+
+    .semester-course {
+      padding: 15px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .semester-course:last-child {
+      border-bottom: 0;
+    }
+
+    .course-info strong {
+      color: var(--navy);
+    }
+
+    .course-info span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .completed {
+      color: var(--success);
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    /* Responsive */
+    @media (max-width: 1000px) {
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .course-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .sidebar {
+        width: 70px;
+        padding: 18px 8px;
+      }
+
+      .logo {
+        justify-content: center;
+        padding: 0 0 20px;
+      }
+
+      .logo h1,
+      .logo span,
+      .nav-title,
+      .nav-item span {
+        display: none;
+      }
+
+      .nav-item {
+        justify-content: center;
+      }
+
+      .main {
+        width: calc(100% - 70px);
+        margin-left: 70px;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .topbar {
+        padding: 0 18px;
+      }
+
+      .stats,
+      .course-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .welcome h1 {
+        font-size: 23px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">C</div>
+        <h1>
+          HKUST SBM Compass
+          <span>Student Academic Portal</span>
+        </h1>
+      </div>
+
+      <div class="nav-title">Main Menu</div>
+
+      <a class="nav-item active" data-page="dashboard">
+        <span>🏠</span>
+        <span>Dashboard</span>
+      </a>
+
+      <a class="nav-item" data-page="courses">
+        <span>📚</span>
+        <span>Course Explorer</span>
+      </a>
+
+      <a class="nav-item" data-page="planner">
+        <span>🗓️</span>
+        <span>Degree Planner</span>
+      </a>
+
+      <a class="nav-item" data-page="requirements">
+        <span>✅</span>
+        <span>Requirements</span>
+      </a>
+
+      <div class="nav-title">Resources</div>
+
+      <a class="nav-item" data-page="links">
+        <span>🔗</span>
+        <span>Useful Links</span>
+      </a>
+
+      <a class="nav-item" data-page="settings">
+        <span>⚙️</span>
+        <span>Settings</span>
+      </a>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <h2 id="pageTitle">Dashboard</h2>
+
+        <div class="profile">
+          <div class="avatar">ST</div>
+          <span>Student Account</span>
+        </div>
+      </header>
+
+      <section class="content">
+
+        <!-- Dashboard -->
+        <div class="page active" id="dashboard">
+          <div class="welcome">
+            <h1>Welcome to HKUST SBM Compass</h1>
+            <p>
+              Designed for HKUST School of Business & Management students.
+              Track your academic progress and plan your degree with ease.
+            </p>
+          </div>
+
+          <div class="stats">
+            <div class="stat-card">
+              <span class="icon">🎓</span>
+              <small>Degree Progress</small>
+              <strong>62%</strong>
+            </div>
+
+            <div class="stat-card">
+              <span class="icon">📖</span>
+              <small>Credits Completed</small>
+              <strong>74</strong>
+            </div>
+
+            <div class="stat-card">
+              <span class="icon">📅</span>
+              <small>Current Semester</small>
+              <strong>Year 3</strong>
+            </div>
+
+            <div class="stat-card">
+              <span class="icon">⭐</span>
+              <small>Current CGA</small>
+              <strong>3.42</strong>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <h3>Degree Progress</h3>
+
+              <div class="progress-row">
+                <div class="progress-label">
+                  <span>University Core</span>
+                  <strong>85%</strong>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar" style="width:85%"></div>
+                </div>
+              </div>
+
+              <div class="progress-row">
+                <div class="progress-label">
+                  <span>School Core</span>
+                  <strong>70%</strong>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar" style="width:70%"></div>
+                </div>
+              </div>
+
+              <div class="progress-row">
+                <div class="progress-label">
+                  <span>Major Requirements</span>
+                  <strong>55%</strong>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar" style="width:55%"></div>
+                </div>
+              </div>
+
+              <div class="progress-row">
+                <div class="progress-label">
+                  <span>Free Electives</span>
+                  <strong>40%</strong>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar" style="width:40%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>Latest Announcements</h3>
+
+              <div class="announcement">
+                <h4>Course enrollment period</h4>
+                <small>Enrollment for the coming semester opens soon.</small>
+              </div>
+
+              <div class="announcement">
+                <h4>Academic advising</h4>
+                <small>Book an advising appointment through the student portal.</small>
+              </div>
+
+              <div class="announcement">
+                <h4>Scholarship opportunities</h4>
+                <small>New SBM scholarship opportunities are now available.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Course Explorer -->
+        <div class="page" id="courses">
+          <div class="card">
+            <h3>SBM Course Explorer</h3>
+
+            <div class="toolbar">
+              <input
+                type="text"
+                id="courseSearch"
+                placeholder="Search by course code or name..."
+              />
+
+              <select id="categoryFilter">
+                <option value="all">All Categories</option>
+                <option value="core">Core Courses</option>
+                <option value="finance">Finance</option>
+                <option value="marketing">Marketing</option>
+                <option value="management">Management</option>
+              </select>
+            </div>
+
+            <div class="course-grid" id="courseGrid"></div>
+          </div>
+        </div>
+
+        <!-- Degree Planner -->
+        <div class="page" id="planner">
+          <div class="card">
+            <h3>Degree Planner</h3>
+
+            <div class="semester">
+              <div class="semester-header">
+                <strong>Year 3 — Fall Semester</strong>
+                <span>15 Credits</span>
+              </div>
+
+              <div class="semester-list">
+                <div class="semester-course">
+                  <div class="course-info">
+                    <strong>ISOM 3230 — Operations Management</strong>
+                    <span>3 Credits · Core Course</span>
+                  </div>
+                  <span class="completed">Completed</span>
+                </div>
+
+                <div class="semester-course">
+                  <div class="course-info">
+                    <strong>FINA 3104 — Corporate Finance</strong>
+                    <span>3 Credits · Finance</span>
+                  </div>
+                  <span class="completed">Completed</span>
+                </div>
+
+                <div class="semester-course">
+                  <div class="course-info">
+                    <strong>MARK 3210 — Consumer Behaviour</strong>
+                    <span>3 Credits · Marketing</span>
+                  </div>
+                  <button class="button secondary">Edit</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="semester">
+              <div class="semester-header">
+                <strong>Year 3 — Spring Semester</strong>
+                <span>12 Credits</span>
+              </div>
+
+              <div class="semester-list">
+                <div class="semester-course">
+                  <div class="course-info">
+                    <strong>MGMT 3110 — Strategic Management</strong>
+                    <span>3 Credits · Management</span>
+                  </div>
+                  <button class="button secondary">Edit</button>
+                </div>
+
+                <div class="semester-course">
+                  <div class="course-info">
+                    <strong>Free Elective</strong>
+                    <span>3 Credits · Elective</span>
+                  </div>
+                  <button class="button secondary">Add Course</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Requirements -->
+        <div class="page" id="requirements">
+          <div class="card">
+            <h3>Degree Requirements</h3>
+
+            <div class="progress-row">
+              <div class="progress-label">
+                <span>Minimum graduation credits</span>
+                <strong>74 / 120</strong>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" style="width:62%"></div>
+              </div>
+            </div>
+
+            <div class="progress-row">
+              <div class="progress-label">
+                <span>University core requirements</span>
+                <strong>Completed</strong>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" style="width:100%; background:#198754"></div>
+              </div>
+            </div>
+
+            <div class="progress-row">
+              <div class="progress-label">
+                <span>Major requirements</span>
+                <strong>55%</strong>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" style="width:55%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Links -->
+        <div class="page" id="links">
+          <div class="card">
+            <h3>Useful Links</h3>
+
+            <p style="margin: 15px 0">
+              <a href="https://hkust.edu.hk" target="_blank">
+                HKUST Official Website
+              </a>
+            </p>
+
+            <p style="margin: 15px 0">
+              <a href="#" onclick="return false">
+                Student Intranet
+              </a>
+            </p>
+
+            <p style="margin: 15px 0">
+              <a href="#" onclick="return false">
+                Academic Registry
+              </a>
+            </p>
+
+            <p style="margin: 15px 0">
+              <a href="#" onclick="return false">
+                SBM Website
+              </a>
+            </p>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="page" id="settings">
+          <div class="card">
+            <h3>Settings</h3>
+            <p style="margin-bottom: 18px">
+              Update your portal preferences.
+            </p>
+
+            <label>
+              <input type="checkbox" checked />
+              Enable announcement notifications
+            </label>
+
+            <br /><br />
+
+            <label>
+              <input type="checkbox" checked />
+              Show completed courses
+            </label>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const courses = [
+      {
+        code: "ISOM 3230",
+        name: "Operations Management",
+        description: "Learn how organizations design and manage efficient operations.",
+        category: "core",
+        tags: ["Core", "3 Credits"]
+      },
+      {
+        code: "FINA 3104",
+        name: "Corporate Finance",
+        description: "Study financial decision-making, valuation, and corporate funding.",
+        category: "finance",
+        tags: ["Finance", "3 Credits"]
+      },
+      {
+        code: "MARK 3210",
+        name: "Consumer Behaviour",
+        description: "Explore how consumers make decisions and respond to marketing.",
+        category: "marketing",
+        tags: ["Marketing", "3 Credits"]
+      },
+      {
+        code: "MGMT 3110",
+        name: "Strategic Management",
+        description: "Understand business strategy and competitive advantage.",
+        category: "management",
+        tags: ["Management", "3 Credits"]
+      },
+      {
+        code: "ACCT 2010",
+        name: "Introduction to Accounting",
+        description: "Learn the fundamentals of financial and management accounting.",
+        category: "core",
+        tags: ["Core", "3 Credits"]
+      },
+      {
+        code: "FINA 3203",
+        name: "Investment Analysis",
+        description: "Analyze investments, portfolios, risk, and financial markets.",
+        category: "finance",
+        tags: ["Finance", "3 Credits"]
+      }
+    ];
+
+    const courseGrid = document.getElementById("courseGrid");
+    const searchInput = document.getElementById("courseSearch");
+    const categoryFilter = document.getElementById("categoryFilter");
+
+    function displayCourses() {
+      const search = searchInput.value.toLowerCase();
+      const category = categoryFilter.value;
+
+      const filtered = courses.filter(course => {
+        const matchesSearch =
+          course.code.toLowerCase().includes(search) ||
+          course.name.toLowerCase().includes(search) ||
+          course.description.toLowerCase().includes(search);
+
+        const matchesCategory =
+          category === "all" || course.category === category;
+
+        return matchesSearch && matchesCategory;
+      });
+
+      courseGrid.innerHTML = filtered.length
+        ? filtered.map(course => `
+          <article class="course-card">
+            <div class="course-code">${course.code}</div>
+            <h3>${course.name}</h3>
+            <p>${course.description}</p>
+            ${course.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+            <br><br>
+            <button class="button" onclick="addCourse('${course.code}')">
+              Add to Planner
+            </button>
+          </article>
+        `).join("")
+        : "<p>No courses found.</p>";
+    }
+
+    function addCourse(code) {
+      alert(`${code} has been added to your degree planner.`);
+    }
+
+    searchInput.addEventListener("input", displayCourses);
+    categoryFilter.addEventListener("change", displayCourses);
+
+    displayCourses();
+
+    const navItems = document.querySelectorAll(".nav-item");
+    const pages = document.querySelectorAll(".page");
+    const pageTitle = document.getElementById("pageTitle");
+
+    navItems.forEach(item => {
+      item.addEventListener("click", () => {
+        const pageId = item.dataset.page;
+
+        navItems.forEach(nav => nav.classList.remove("active"));
+        item.classList.add("active");
+
+        pages.forEach(page => page.classList.remove("active"));
+        document.getElementById(pageId).classList.add("active");
+
+        pageTitle.textContent =
+          item.querySelector("span:last-child").textContent;
+      });
+    });
+  </script>
+</body>
+</html>
