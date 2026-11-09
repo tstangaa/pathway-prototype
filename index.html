@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pathway — HKUST SBM Major Explorer</title>
+
+  <style>
+    :root {
+      --navy: #102a43;
+      --blue: #1976d2;
+      --light-blue: #eaf4ff;
+      --gold: #f2b134;
+      --cream: #f7f9fc;
+      --text: #243b53;
+      --muted: #627d98;
+      --border: #d9e2ec;
+      --green: #25855a;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+    }
+
+    header {
+      background: var(--navy);
+      color: white;
+      padding: 18px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: .3px;
+    }
+
+    .logo span {
+      color: var(--gold);
+    }
+
+    header small {
+      opacity: .8;
+    }
+
+    main {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 38px 20px 70px;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #12385d, #1976d2);
+      color: white;
+      border-radius: 20px;
+      padding: 42px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: clamp(30px, 5vw, 50px);
+      margin: 0 0 16px;
+      line-height: 1.05;
+    }
+
+    h2 {
+      color: var(--navy);
+      margin-top: 0;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      color: var(--navy);
+    }
+
+    p {
+      line-height: 1.6;
+    }
+
+    .hero p {
+      max-width: 680px;
+      font-size: 18px;
+      opacity: .94;
+    }
+
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 13px 19px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--blue);
+      color: white;
+      transition: .2s;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(.95);
+    }
+
+    button.secondary {
+      background: white;
+      color: var(--navy);
+      border: 1px solid var(--border);
+    }
+
+    button.gold {
+      background: var(--gold);
+      color: #352600;
+    }
+
+    button.full {
+      width: 100%;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 22px;
+      box-shadow: 0 5px 18px rgba(16, 42, 67, .05);
+    }
+
+    .feature-icon {
+      font-size: 30px;
+    }
+
+    .notice {
+      background: #fff8e5;
+      border-left: 4px solid var(--gold);
+      padding: 14px 17px;
+      border-radius: 8px;
+      margin: 18px 0;
+      color: #684f00;
+    }
+
+    .progress-wrap {
+      background: #dfeaf5;
+      height: 9px;
+      border-radius: 10px;
+      margin: 16px 0 28px;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: var(--blue);
+      transition: .3s;
+    }
+
+    .question-card {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .option {
+      display: block;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 17px;
+      margin: 11px 0;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .option:hover {
+      border-color: var(--blue);
+      background: var(--light-blue);
+    }
+
+    .option input {
+      margin-right: 12px;
+      accent-color: var(--blue);
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      margin-top: 22px;
+      flex-wrap: wrap;
+    }
+
+    .result-card {
+      border-top: 5px solid var(--blue);
+    }
+
+    .match {
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 5px 9px;
+      background: var(--light-blue);
+      color: var(--blue);
+      border-radius: 20px;
+      font-size: 12px;
+      margin: 3px;
+    }
+
+    .bar {
+      height: 9px;
+      background: #e5edf5;
+      border-radius: 9px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .bar div {
+      height: 100%;
+      background: var(--blue);
+    }
+
+    .chat-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 18px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .messages {
+      min-height: 180px;
+      max-height: 360px;
+      overflow-y: auto;
+      padding: 5px;
+    }
+
+    .message {
+      padding: 12px 15px;
+      border-radius: 13px;
+      margin: 9px 0;
+      max-width: 85%;
+      line-height: 1.45;
+    }
+
+    .bot {
+      background: var(--light-blue);
+      margin-right: auto;
+    }
+
+    .user {
+      background: var(--navy);
+      color: white;
+      margin-left: auto;
+    }
+
+    .chat-input {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blue);
+    }
+
+    .score {
+      font-size: 38px;
+      font-weight: 800;
+      color: var(--blue);
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 38px;
+    }
+
+    @media(max-width: 600px) {
+      .hero {
+        padding: 28px 22px;
+      }
+
+      main {
+        padding-top: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo">Pathway<span>.</span></div>
+    <small>HKUST SBM Major Explorer</small>
+  </header>
+
+  <main>
+    <!-- HOME -->
+    <section id="home" class="screen active">
+      <div class="hero">
+        <h1>Find a pathway that fits you.</h1>
+        <p>
+          A guided major exploration tool for undeclared HKUST School of Business
+          and Management students.
+        </p>
+        <button class="gold" onclick="showScreen('clarity')">
+          Start exploration
+        </button>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="feature-icon">🧭</div>
+          <h3>Understand yourself</h3>
+          <p>Reflect on your interests, strengths, preferred work style, and constraints.</p>
+        </div>
+
+        <div class="card">
+          <div class="feature-icon">📚</div>
+          <h3>Compare majors</h3>
+          <p>Explore programme focus, sample courses, requirements, and career directions in one place.</p>
+        </div>
+
+        <div class="card">
+          <div class="feature-icon">💬</div>
+          <h3>Ask questions</h3>
+          <p>Use the consultation chatbot to clarify common questions before speaking with an advisor.</p>
+        </div>
+      </div>
+
+      <div class="notice">
+        <strong>Prototype notice:</strong>
+        This demo uses illustrative programme data. Always verify requirements and deadlines
+        with official HKUST SBM sources and an academic advisor.
+      </div>
+    </section>
+
+    <!-- INITIAL CLARITY -->
+    <section id="clarity" class="screen">
+      <div class="card question-card">
+        <h2>Before we begin</h2>
+        <p>
+          How clear are you currently about which major you want to pursue?
+        </p>
+
+        <div class="score"><span id="clarityValue">5</span>/10</div>
+        <input id="claritySlider" type="range" min="1" max="10" value="5"
+               oninput="document.getElementById('clarityValue').innerText=this.value">
+
+        <div class="actions">
+          <button class="secondary" onclick="showScreen('home')">Back</button>
+          <button onclick="startQuiz()">Continue</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz" class="screen">
+      <div class="question-card">
+        <h2>Let's learn about you</h2>
+        <p id="questionNumber"></p>
+
+        <div class="progress-wrap">
+          <div id="progress" class="progress"></div>
+        </div>
+
+        <div class="card">
+          <h3 id="questionText"></h3>
+          <div id="options"></div>
+        </div>
+
+        <div class="actions">
+          <button class="secondary" onclick="previousQuestion()">Back</button>
+          <button id="nextButton" onclick="nextQuestion()">Next</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="results" class="screen">
+      <h2>Your exploratory matches</h2>
+      <p>
+        These are not decisions. They are starting points for further research,
+        course planning, and advisor discussion.
+      </p>
+
+      <div id="resultsContainer"></div>
+
+      <div class="notice">
+        Recommendations are generated from your answers and the prototype's
+        programme profiles. Confirm current BCGA/CGA thresholds, ranking rules,
+        prerequisites, and declaration deadlines using official university information.
+      </div>
+
+      <div class="actions">
+        <button onclick="showScreen('chat')">Ask Pathway a question</button>
+        <button class="secondary" onclick="showScreen('feedback')">Complete reflection</button>
+      </div>
+    </section>
+
+    <!-- CHAT -->
+    <section id="chat" class="screen">
+      <div class="chat-box">
+        <h2>Ask Pathway</h2>
+        <p>
+          Ask about the type of work, course emphasis, or career directions
+          associated with a major.
+        </p>
+
+        <div class="messages" id="messages">
+          <div class="message bot">
+            Hi! I can answer questions about the prototype's major profiles.
+            Try asking: “What is Finance like?”, “Which major involves creativity?”,
+            or “What should I verify before declaring?”
+          </div>
+        </div>
+
+        <div class="chat-input">
+          <input id="chatInput" type="text" placeholder="Type your question..." />
+          <button onclick="sendMessage()">Send</button>
+        </div>
+
+        <div class="actions">
+          <button class="secondary" onclick="showScreen('results')">Back to matches</button>
+          <button onclick="showScreen('feedback')">Finish</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEEDBACK -->
+    <section id="feedback" class="screen">
+      <div class="card question-card">
+        <h2>Did Pathway improve your clarity?</h2>
+        <p>
+          Rate how clear you now feel about your possible academic pathways.
+        </p>
+
+        <div class="score"><span id="afterValue">7</span>/10</div>
+        <input id="afterSlider" type="range" min="1" max="10" value="7"
+               oninput="document.getElementById('afterValue').innerText=this.value">
+
+        <p>
+          What was most helpful?
+        </p>
+
+        <label class="option">
+          <input type="checkbox"> The guided questions
+        </label>
+        <label class="option">
+          <input type="checkbox"> Comparing major profiles
+        </label>
+        <label class="option">
+          <input type="checkbox"> Seeing sample courses
+        </label>
+        <label class="option">
+          <input type="checkbox"> Asking the chatbot
+        </label>
+
+        <div class="actions">
+          <button class="secondary" onclick="showScreen('results')">Back</button>
+          <button onclick="submitFeedback()">Submit feedback</button>
+        </div>
+
+        <p id="feedbackMessage"></p>
+      </div>
+    </section>
+
+    <footer>
+      Pathway is a student decision-support prototype, not an official HKUST advising service.
+    </footer>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        text: "Which activities sound most interesting to you?",
+        options: [
+          { text: "Working with numbers, data, and financial decisions", scores: { Finance: 3, Accounting: 2, "Business Analytics": 3 } },
+          { text: "Understanding people, markets, and customer behaviour", scores: { Marketing: 3, Management: 2, Economics: 2 } },
+          { text: "Improving processes and solving operational problems", scores: { "Operations Management": 3, "Business Analytics": 2, "Information Systems": 2 } },
+          { text: "Using technology to improve how organisations work", scores: { "Information Systems": 3, "Business Analytics": 3, "Operations Management": 2 } }
+        ]
+      },
+      {
+        text: "Which strength best describes you?",
+        options: [
+          { text: "Careful, structured, and detail-oriented", scores: { Accounting: 3, Finance: 2, "Operations Management": 1 } },
+          { text: "Creative, persuasive, and interested in communication", scores: { Marketing: 3, Management: 2 } },
+          { text: "Analytical and comfortable interpreting evidence", scores: { Economics: 3, Finance: 2, "Business Analytics": 3 } },
+          { text: "Good at coordinating people and making decisions", scores: { Management: 3, Marketing: 1, "Operations Management": 2 } }
+        ]
+      },
+      {
+        text: "What type of learning would you prefer?",
+        options: [
+          { text: "Quantitative models and analytical problem-solving", scores: { Economics: 3, Finance: 3, "Business Analytics": 3 } },
+          { text: "Projects involving people, communication, and ideas", scores: { Marketing: 3, Management: 3 } },
+          { text: "Systems, technology, and digital transformation", scores: { "Information Systems": 3, "Business Analytics": 2 } },
+          { text: "Structured procedures and professional standards", scores: { Accounting: 3, "Operations Management": 2 } }
+        ]
+      },
+      {
+        text: "Which future direction sounds most appealing?",
+        options: [
+          { text: "Banking, investment, or financial analysis", scores: { Finance: 4 } },
+          { text: "Branding, advertising, or customer strategy", scores: { Marketing: 4 } },
+          { text: "Consulting, business strategy, or leadership", scores: { Management: 3, Economics: 2 } },
+          { text: "Technology, analytics, or digital business", scores: { "Information Systems": 3, "Business Analytics": 4 } }
+        ]
+      }
+    ];
+
+    const majors = {
+      Finance: {
+        focus: "Financial markets, valuation, investment, and corporate finance.",
+        courses: "Corporate Finance, Investments, Financial Markets",
+        careers: "Investment banking, corporate finance, asset management, risk analysis",
+        tags: ["quantitative", "markets", "decision-making"]
+      },
+      Accounting: {
+        focus: "Financial reporting, assurance, management control, and professional practice.",
+        courses: "Financial Accounting, Management Accounting, Auditing",
+        careers: "Audit, tax, financial reporting, consulting, compliance",
+        tags: ["structured", "detail-oriented", "professional"]
+      },
+      Marketing: {
+        focus: "Customers, branding, communication, market research, and product strategy.",
+        courses: "Consumer Behaviour, Marketing Research, Brand Management",
+        careers: "Brand management, advertising, market research, sales, product marketing",
+        tags: ["creative", "people-focused", "communication"]
+      },
+      Management: {
+        focus: "Organisations, leadership, strategy, teamwork, and decision-making.",
+        courses: "Organisational Behaviour, Strategic Management, Leadership",
+        careers: "Consulting, human resources, entrepreneurship, general management",
+        tags: ["leadership", "people-focused", "strategy"]
+      },
+      Economics: {
+        focus: "Economic systems, incentives, markets, and evidence-based analysis.",
+        courses: "Microeconomics, Macroeconomics, Econometrics",
+        careers: "Economic analysis, consulting, policy, research, finance",
+        tags: ["analytical", "quantitative", "systems"]
+      },
+      "Information Systems": {
+        focus: "Technology, business processes, data systems, and digital transformation.",
+        courses: "Systems Analysis, Database Management, Digital Innovation",
+        careers: "Business analyst, technology consulting, product management, IT strategy",
+        tags: ["technology", "systems", "problem-solving"]
+      },
+      "Operations Management": {
+        focus: "Process improvement, supply chains, service operations, and efficiency.",
+        courses: "Operations Management, Supply Chain, Process Improvement",
+        careers: "Operations, supply chain, consulting, project management",
+        tags: ["processes", "problem-solving", "coordination"]
+      },
+      "Business Analytics": {
+        focus: "Data-driven decision-making, statistics, visualisation, and business insights.",
+        courses: "Business Statistics, Data Visualisation, Predictive Analytics",
+        careers: "Data analyst, business intelligence, consulting, product analytics",
+        tags: ["data", "quantitative", "technology"]
+      }
+    };
+
+    let currentQuestion = 0;
+    let answers = [];
+    let scores = {};
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.remove("active");
+      });
+      document.getElementById(id).classList.add("active");
+      window.scrollTo(0, 0);
+    }
+
+    function startQuiz() {
+      currentQuestion = 0;
+      answers = [];
+      scores = {};
+      showScreen("quiz");
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const question = questions[currentQuestion];
+
+      document.getElementById("questionNumber").innerText =
+        `Question ${currentQuestion + 1} of ${questions.length}`;
+
+      document.getElementById("questionText").innerText = question.text;
+
+      document.getElementById("progress").style.width =
+        `${(currentQuestion / questions.length) * 100}%`;
+
+      const options = document.getElementById("options");
+      options.innerHTML = "";
+
+      question.options.forEach((option, index) => {
+        const label = document.createElement("label");
+        label.className = "option";
+        label.innerHTML = `
+          <input type="radio" name="answer" value="${index}"
+          ${answers[currentQuestion] === index ? "checked" : ""}>
+          ${option.text}
+        `;
+        options.appendChild(label);
+      });
+
+      document.getElementById("nextButton").innerText =
+        currentQuestion === questions.length - 1 ? "See my matches" : "Next";
+    }
+
+    function nextQuestion() {
+      const selected = document.querySelector('input[name="answer"]:checked');
+
+      if (!selected) {
+        alert("Please select an answer before continuing.");
+        return;
+      }
+
+      answers[currentQuestion] = Number(selected.value);
+
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        renderQuestion();
+      } else {
+        calculateResults();
+        showScreen("results");
+      }
+    }
+
+    function previousQuestion() {
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        renderQuestion();
+      } else {
+        showScreen("clarity");
+      }
+    }
+
+    function calculateResults() {
+      scores = {};
+
+      answers.forEach((answerIndex, questionIndex) => {
+        const selectedOption = questions[questionIndex].options[answerIndex];
+
+        Object.entries(selectedOption.scores).forEach(([major, points]) => {
+          scores[major] = (scores[major] || 0) + points;
+        });
+      });
+
+      const ranked = Object.entries(scores)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3);
+
+      const maxScore = ranked[0] ? ranked[0][1] : 1;
+      const container = document.getElementById("resultsContainer");
+      container.innerHTML = "";
+
+      ranked.forEach(([major, score], index) => {
+        const data = majors[major];
+        const percentage = Math.round((score / maxScore) * 100);
+
+        const card = document.createElement("div");
+        card.className = "card result-card";
+        card.style.marginBottom = "16px";
+
+        card.innerHTML = `
+          <p class="match">MATCH ${index + 1} · ${percentage}% exploratory fit</p>
+          <h3>${major}</h3>
+          <p>${data.focus}</p>
+
+          <p><strong>Example course themes:</strong><br>
+          ${data.courses}</p>
+
+          <p><strong>Possible career directions:</strong><br>
+          ${data.careers}</p>
+
+          <div>
+            ${data.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+          </div>
+
+          <div class="bar">
+            <div style="width:${percentage}%"></div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("chatInput");
+      const text = input.value.trim();
+
+      if (!text) return;
+
+      addMessage(text, "user");
+      input.value = "";
+
+      setTimeout(() => {
+        const reply = generateReply(text);
+        addMessage(reply, "bot");
+      }, 350);
+    }
+
+    function addMessage(text, type) {
+      const messages = document.getElementById("messages");
+      const div = document.createElement("div");
+      div.className = `message ${type}`;
+      div.innerText = text;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function generateReply(text) {
+      const lower = text.toLowerCase();
+
+      if (lower.includes("finance")) {
+        return "Finance may suit students who enjoy quantitative analysis, markets, valuation, and financial decision-making. Explore whether you enjoy analytical coursework and confirm the current declaration requirements with SBM.";
+      }
+
+      if (lower.includes("marketing") || lower.includes("creative")) {
+        return "Marketing may suit students interested in customers, communication, branding, and market research. Consider trying a marketing-related course or student project before deciding.";
+      }
+
+      if (lower.includes("technology") || lower.includes("tech") || lower.includes("data")) {
+        return "Information Systems and Business Analytics are possible directions for students interested in technology, data, and improving business decisions. Compare the amount of statistics, programming, and systems work in the current curriculum.";
+      }
+
+      if (lower.includes("account")) {
+        return "Accounting focuses on financial reporting, auditing, professional standards, and detailed analysis. It may be a good fit if you prefer structured work and careful attention to detail.";
+      }
+
+      if (lower.includes("requirement") || lower.includes("declare") || lower.includes("cga") || lower.includes("bcga")) {
+        return "Before declaring, verify the latest prerequisite courses, BCGA/CGA thresholds, ranking criteria, declaration deadline, and available places through official HKUST SBM sources. An academic advisor should confirm your situation.";
+      }
+
+      if (lower.includes("career") || lower.includes("job")) {
+        return "Career outcomes are not fixed by major. A useful next step is to compare alumni experiences, internship opportunities, course projects, and the skills each pathway develops.";
+      }
+
+      return "That is a useful question to discuss with an academic advisor. For this prototype, compare the major profiles, sample course themes, current official requirements, and alumni experiences before making a decision.";
+    }
+
+    function submitFeedback() {
+      const before = document.getElementById("claritySlider").value;
+      const after = document.getElementById("afterSlider").value;
+      const change = after - before;
+
+      document.getElementById("feedbackMessage").innerHTML =
+        `<strong>Thank you.</strong> Your clarity changed from ${before}/10 to ${after}/10
+        (${change >= 0 ? "+" : ""}${change}). This demonstrates the proposed evaluation metric.`;
+    }
+  </script>
+</body>
+</html>
